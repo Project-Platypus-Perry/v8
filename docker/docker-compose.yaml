@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5434:5432"
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+  metanet1:
+    driver: bridge
+
+volumes:
+  qdrant_data:
+  postgres_data:
+
+configs:
+  qdrant_config:
+    content: |
+      log_level: INFO
