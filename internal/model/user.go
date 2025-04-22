@@ -8,13 +8,10 @@ import (
 
 type User struct {
 	gorm.Model
-	ID          string    `json:"id" gorm:"primaryKey"`
-	Name        string    `json:"name" gorm:"not null"`
-	Email       string    `json:"email" gorm:"not null;unique"`
-	Password    string    `json:"password" gorm:"not null"`
-	Phone       string    `json:"phone" gorm:"not null;unique"`
-	DateOfBirth time.Time `json:"date_of_birth" gorm:"null"`
-	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt   time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	DeletedAt   time.Time `json:"deleted_at" gorm:"index"`
+	ID          string    `json:"ID" gorm:"primaryKey"`
+	Name        string    `json:"Name" gorm:"not null" validate:"required,min=2,max=50"`
+	Email       string    `json:"Email" gorm:"not null;unique" validate:"required,email"`
+	Password    string    `json:"Password" gorm:"not null" validate:"required,min=8"`
+	Phone       string    `json:"Phone" gorm:"not null;unique" validate:"required,e164"`
+	DateOfBirth time.Time `json:"DateOfBirth" gorm:"null" validate:"omitempty"`
 }

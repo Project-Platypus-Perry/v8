@@ -9,10 +9,9 @@ import (
 
 type UserRepository interface {
 	Create(ctx context.Context, user *model.User) (*model.User, error)
-	GetByID(ctx context.Context, id int) (*model.User, error)
-	Update(ctx context.Context, user *model.User) (*model.User, error)
-	Delete(ctx context.Context, id int) error
-	List(ctx context.Context) ([]*model.User, error)
+	GetByID(ctx context.Context, id string) (*model.User, error)
+	Update(ctx context.Context, id string, user *model.User) (*model.User, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type userRepo struct {
@@ -33,7 +32,7 @@ func (r *userRepo) Create(ctx context.Context, user *model.User) (*model.User, e
 }
 
 // Get a user by ID
-func (r *userRepo) GetByID(ctx context.Context, id int) (*model.User, error) {
+func (r *userRepo) GetByID(ctx context.Context, id string) (*model.User, error) {
 	var user model.User
 	err := r.db.Where("id = ?", id).First(&user).Error
 	if err != nil {
@@ -43,29 +42,31 @@ func (r *userRepo) GetByID(ctx context.Context, id int) (*model.User, error) {
 }
 
 // Update a user
-func (r *userRepo) Update(ctx context.Context, user *model.User) (*model.User, error) {
-	err := r.db.Save(user).Error
+func (r *userRepo) Update(ctx context.Context, id string, user *model.User) (*model.User, error) {
+	var existingUser model.User
+	err := r.db.Where("id = ?", id).First(&existingUser).Error
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+
+	if user.Name != "" {
+		existingUser.Name = user.Name
+	}
+	if user.Password != "" {
+		existingUser.Password = user.Password
+	}
+	err = r.db.Save(&existingUser).Error
+	if err != nil {
+		return nil, err
+	}
+	return &existingUser, nil
 }
 
 // Delete a user
-func (r *userRepo) Delete(ctx context.Context, id int) error {
-	err := r.db.Delete(&model.User{}, id).Error
+func (r *userRepo) Delete(ctx context.Context, id string) error {
+	err := r.db.Where("id = ?", id).Delete(&model.User{}).Error
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-// List all users
-func (r *userRepo) List(ctx context.Context) ([]*model.User, error) {
-	var users []*model.User
-	err := r.db.Find(&users).Error
-	if err != nil {
-		return nil, err
-	}
-	return users, nil
 }

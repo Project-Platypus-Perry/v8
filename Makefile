@@ -2,6 +2,7 @@
 APP_NAME := my-backend
 MAIN := cmd/server/main.go
 SWAG_OUT := ./docs
+GO_BIN := $(shell go env GOPATH)/bin
 
 # Load env vars from .env file
 include .env
@@ -17,10 +18,10 @@ build:
 run:
 	go run $(MAIN)
 
-# Run with environment variables from .env
+# Run with hot reload using air
 .PHONY: dev
 dev:
-	godotenv -f .env go run $(MAIN)
+	$(GO_BIN)/air
 
 # Swagger generation
 .PHONY: swagger

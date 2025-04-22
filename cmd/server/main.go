@@ -23,7 +23,7 @@ func main() {
 	logger := logger.Init(cfg.LogLevel)
 
 	// Initialize the app
-	logger.Info("Starting the app")
+	logger.Info("Initializing the app")
 	app := app.NewApp(cfg)
 	logger.Info("App initialized")
 

@@ -10,9 +10,20 @@ import (
 	"github.com/gagan-gaurav/base/internal/repository"
 	"github.com/gagan-gaurav/base/internal/router"
 	"github.com/gagan-gaurav/base/internal/service"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
+
+// CustomValidator is a wrapper for the validator
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+// Validate implements echo.Validator interface
+func (cv *CustomValidator) Validate(i interface{}) error {
+	return cv.validator.Struct(i)
+}
 
 type App struct {
 	cfg  *config.Config
@@ -41,6 +52,9 @@ func NewApp(cfg *config.Config) *App {
 
 	// Initialize Echo
 	e := echo.New()
+
+	// Register validator
+	e.Validator = &CustomValidator{validator: validator.New()}
 
 	// Initialize router
 	routerDeps := &router.Dependencies{
