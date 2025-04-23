@@ -24,14 +24,26 @@ dev:
 	$(GO_BIN)/air
 
 # Swagger generation
-.PHONY: swagger
-swagger:
-	swag init --generalInfo $(MAIN) --output $(SWAG_OUT)
+.PHONY: docs
+docs:
+	$(GO_BIN)/swag init --generalInfo $(MAIN) --output $(SWAG_OUT) --parseDependency --parseInternal
+	
 
-# Linting (you can use golangci-lint or go vet as fallback)
+# Linting
 .PHONY: lint
 lint:
-	golangci-lint run || true
+	@echo "Running go vet..."
+	@go vet ./...
+	@echo "Running staticcheck..."
+	@$(GO_BIN)/staticcheck ./...
+	@echo "Running golangci-lint..."
+	@golangci-lint run
+	@echo "Running gofmt..."
+	@if [ -n "$$(gofmt -l .)" ]; then \
+		echo "Go files need formatting:"; \
+		gofmt -l .; \
+		exit 1; \
+	fi
 
 # Tests
 .PHONY: test

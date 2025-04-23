@@ -11,6 +11,8 @@ A production-ready Go backend service using Echo framework, GORM, and Atlas for 
 - **Logging**: [Zap](https://github.com/uber-go/zap) - Blazing fast, structured logging
 - **Validation**: go-playground/validator - Request validation using struct tags
 - **Hot Reload**: Air - Live reload for Go apps
+- **Documentation**: Swagger/OpenAPI - API documentation
+- **Linting**: Multiple linters for code quality
 
 ## Prerequisites
 
@@ -41,6 +43,13 @@ go install github.com/air-verse/air@latest
 
 # Install Atlas CLI for migrations
 curl -sSf https://atlasgo.sh | sh
+
+# Install Swagger tools
+go install github.com/swaggo/swag/cmd/swag@latest
+
+# Install linting tools
+go install honnef.co/go/tools/cmd/staticcheck@latest
+brew install golangci-lint  # For macOS, see golangci-lint docs for other OS
 ```
 
 4. Create `.env` file:
@@ -80,6 +89,57 @@ make dev
 make build
 ./bin/my-backend
 ```
+
+## API Documentation
+
+This project uses Swagger/OpenAPI for API documentation. The documentation is automatically generated from annotations in the code.
+
+1. **Generate Documentation**:
+
+```bash
+make docs
+```
+
+2. **View Documentation**:
+
+Once the server is running, access the Swagger UI at:
+
+- http://localhost:8080/swagger/index.html
+
+The documentation includes:
+
+- All API endpoints
+- Request/response schemas
+- Authentication requirements
+- Example requests
+
+## Code Quality
+
+This project uses multiple linting tools to ensure code quality:
+
+1. **Run All Linters**:
+
+```bash
+make lint
+```
+
+This will run:
+
+- `go vet`: Checks for common errors
+- `staticcheck`: Advanced static analysis
+- `golangci-lint`: Comprehensive linting
+- `gofmt`: Code formatting checks
+
+2. **Format Code**:
+
+```bash
+make fmt
+```
+
+This will:
+
+- Format Go files using `gofmt`
+- Organize imports using `goimports`
 
 ## Database Migrations
 

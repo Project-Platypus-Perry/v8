@@ -9,6 +9,7 @@ import (
 	"github.com/gagan-gaurav/base/internal/service"
 	"github.com/gagan-gaurav/base/pkg/logger"
 	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.uber.org/zap"
 )
 
@@ -38,8 +39,12 @@ func (r *Router) InitRoutes() {
 	r.e.Any("/*", handleNotFound)
 
 	v1 := r.e.Group("/api/v1")
+
 	v1.Use(middleware.RequestLogger)
 	// v1.Use(middleware.JWTAuth)
+
+	// Swagger documentation endpoint
+	v1.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Health check routes
 	health := handler.NewHealthHandler()

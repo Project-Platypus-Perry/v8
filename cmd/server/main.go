@@ -3,20 +3,26 @@ package main
 import (
 	"github.com/gagan-gaurav/base/pkg/logger"
 
+	_ "github.com/gagan-gaurav/base/docs" // This line is needed for swagger
 	"github.com/gagan-gaurav/base/internal/app"
 	"github.com/gagan-gaurav/base/internal/config"
 )
 
-// @title           My Enterprise API
+// @title           Base API
 // @version         1.0
-// @description     This is a sample enterprise backend API.
-// @termsOfService  http://yourdomain.com/terms/
+// @description     A RESTful API service providing user management and health check endpoints
+// @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support
-// @contact.email  support@yourdomain.com
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host      localhost:8080
 // @BasePath  /api/v1
+// @schemes   http https
 
 func main() {
 	cfg := config.Load()
