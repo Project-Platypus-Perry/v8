@@ -1,5 +1,7 @@
 package constants
 
+import "database/sql/driver"
+
 // Language constants
 type Language string
 
@@ -7,6 +9,15 @@ const (
 	LanguageEnglish Language = "en"
 	LanguageHindi   Language = "hi"
 )
+
+func (p *Language) Scan(value interface{}) error {
+	*p = Language(value.([]byte))
+	return nil
+}
+
+func (p Language) Value() (driver.Value, error) {
+	return string(p), nil
+}
 
 // Visibility constants
 type Visibility string
@@ -16,6 +27,15 @@ const (
 	PublicVisibility  Visibility = "public"
 )
 
+func (p *Visibility) Scan(value interface{}) error {
+	*p = Visibility(value.([]byte))
+	return nil
+}
+
+func (p Visibility) Value() (driver.Value, error) {
+	return string(p), nil
+}
+
 // Content type constants
 type ContentType string
 
@@ -24,3 +44,12 @@ const (
 	ContentTypeDPP   ContentType = "dpp"
 	ContentTypeVideo ContentType = "video"
 )
+
+func (p *ContentType) Scan(value interface{}) error {
+	*p = ContentType(value.([]byte))
+	return nil
+}
+
+func (p ContentType) Value() (driver.Value, error) {
+	return string(p), nil
+}

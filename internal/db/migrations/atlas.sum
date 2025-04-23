@@ -1,4 +1,4 @@
-h1:+hQqZgHFe3frj7qUbLlWP5O3Sto30U6kLMZoAgxDej4=
+h1:7XmErNwdUXFnGpMEfdZPFvhgNPVd7IhwbkSXMOIRUqg=
 20250420134530.sql h1:RKyq/zT/s5mv+pxXUa2slj8gfZ8yMSBy5D7AlioORWQ=
 20250420145611.sql h1:Xpvau9gFc3hNRCBzaux6n1l/s51XQjilcKfSArVculM=
 20250420145902.sql h1:zJYCgQQZoglpPM1c4slYQzVEqPIrMfDL5ciurbjbhdI=
@@ -10,3 +10,4 @@ h1:+hQqZgHFe3frj7qUbLlWP5O3Sto30U6kLMZoAgxDej4=
 20250421204333_init_models.sql h1:rZ4RvY1ZfEUZ0Zcdrk91Vbp/b8P9k2/HLHc/+Ta3loU=
 20250422195537_new-mig.sql h1:sLm3sF7DxbOwL/jxgVLo+ScJg2DVh0SGvV+DDQpMKAE=
 20250422200439_gorm-struct.sql h1:VRTSlNqIT+z8CDKhZ6cF3tvDM0web5grWtJ79cj7P9A=
+20250423111447_contents_table.sql h1:s23eYUpICkfp1fZN9hEqOa/WAojFk+KaoocK2VEGubE=

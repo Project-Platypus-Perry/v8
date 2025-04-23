@@ -10,24 +10,19 @@ data "external_schema" "gorm" {
   ]
 }
 
-// data "composite_schema" "app" {
-//   # Load enum types first.
-//   schema "public" {
-//     url = "file://internal/schema.sql"
-//   }
-//   # Then, load the GORM models.
-//   schema "public" {
-//     url = data.external_schema.gorm.url
-//   }
-// }
-
-// env "local" {
-//   src = data.composite_schema.app.url
-//   dev = "postgres://postgres:postgres@localhost:5434/postgres_dev?sslmode=disable"
-// }
+data "composite_schema" "app" {
+  # Load enum types first.
+  schema "public" {
+    url = "file://internal/schema.sql"
+  }
+  # Then, load the GORM models.
+  schema "public" {
+    url = data.external_schema.gorm.url
+  }
+}
 
 env "gorm" {
-  src = data.external_schema.gorm.url
+  src = data.composite_schema.app.url
   url = "postgres://postgres:postgres@localhost:5434/postgres?sslmode=disable"
   dev = "postgres://postgres:postgres@localhost:5434/postgres_dev?sslmode=disable"
   migration {
