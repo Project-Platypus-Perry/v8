@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/gagan-gaurav/base/internal/constants"
+	"github.com/gagan-gaurav/v8/internal/constants"
 	"github.com/joho/godotenv"
 )
 

@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/gagan-gaurav/base/internal/model"
-	"github.com/gagan-gaurav/base/internal/repository"
+	"github.com/gagan-gaurav/v8/internal/model"
+	"github.com/gagan-gaurav/v8/internal/repository"
 )
 
 type UserService interface {

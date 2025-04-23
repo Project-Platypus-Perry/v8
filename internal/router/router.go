@@ -3,11 +3,11 @@ package router
 import (
 	"net/http"
 
-	"github.com/gagan-gaurav/base/internal/config"
-	"github.com/gagan-gaurav/base/internal/handler"
-	"github.com/gagan-gaurav/base/internal/middleware"
-	"github.com/gagan-gaurav/base/internal/service"
-	"github.com/gagan-gaurav/base/pkg/logger"
+	"github.com/gagan-gaurav/v8/internal/config"
+	"github.com/gagan-gaurav/v8/internal/handler"
+	"github.com/gagan-gaurav/v8/internal/middleware"
+	"github.com/gagan-gaurav/v8/internal/service"
+	"github.com/gagan-gaurav/v8/pkg/logger"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.uber.org/zap"

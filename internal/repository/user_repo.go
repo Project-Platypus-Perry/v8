@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/gagan-gaurav/base/internal/model"
+	"github.com/gagan-gaurav/v8/internal/model"
 	"gorm.io/gorm"
 )
 

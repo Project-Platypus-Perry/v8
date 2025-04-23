@@ -1,4 +1,4 @@
-module github.com/gagan-gaurav/base
+module github.com/gagan-gaurav/v8
 
 go 1.23.5
 
