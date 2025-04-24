@@ -5,13 +5,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gagan-gaurav/v8/internal/config"
-	"github.com/gagan-gaurav/v8/internal/db"
-	"github.com/gagan-gaurav/v8/internal/repository"
-	"github.com/gagan-gaurav/v8/internal/router"
-	"github.com/gagan-gaurav/v8/internal/service"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/project-platypus-perry/v8/internal/config"
+	"github.com/project-platypus-perry/v8/internal/db"
+	"github.com/project-platypus-perry/v8/internal/repository"
+	"github.com/project-platypus-perry/v8/internal/router"
+	"github.com/project-platypus-perry/v8/internal/service"
 	"gorm.io/gorm"
 )
 

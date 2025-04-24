@@ -3,12 +3,12 @@ package router
 import (
 	"net/http"
 
-	"github.com/gagan-gaurav/v8/internal/config"
-	"github.com/gagan-gaurav/v8/internal/handler"
-	"github.com/gagan-gaurav/v8/internal/middleware"
-	"github.com/gagan-gaurav/v8/internal/service"
-	"github.com/gagan-gaurav/v8/pkg/logger"
 	"github.com/labstack/echo/v4"
+	"github.com/project-platypus-perry/v8/internal/config"
+	"github.com/project-platypus-perry/v8/internal/handler"
+	"github.com/project-platypus-perry/v8/internal/middleware"
+	"github.com/project-platypus-perry/v8/internal/service"
+	"github.com/project-platypus-perry/v8/pkg/logger"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.uber.org/zap"
 )

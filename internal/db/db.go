@@ -2,8 +2,8 @@ package db
 
 import (
 	_ "ariga.io/atlas-provider-gorm/gormschema"
-	"github.com/gagan-gaurav/v8/internal/config"
-	"github.com/gagan-gaurav/v8/pkg/logger"
+	"github.com/project-platypus-perry/v8/internal/config"
+	"github.com/project-platypus-perry/v8/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

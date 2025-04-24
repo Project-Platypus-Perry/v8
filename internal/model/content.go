@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/gagan-gaurav/v8/internal/constants"
+	"github.com/project-platypus-perry/v8/internal/constants"
 	"gorm.io/gorm"
 )
 
