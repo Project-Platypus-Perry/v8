@@ -8,21 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitPostgres(cfg *config.Config) *gorm.DB {
+func InitPostgres(cfg *config.Config) (*gorm.DB, error) {
 	logger.Info("Initializing Postgres")
 	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{})
 	if err != nil {
 		logger.Error(err.Error())
+		return nil, err
 	}
 
-	// Register the Gorm schema driver
-	// stmts, err := gormschema.New("postgres").Load(&model.User{})
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// log.Println(stmts)
-
 	logger.Info("Postgres initialized")
-	return db
+	return db, nil
 }

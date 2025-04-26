@@ -12,6 +12,8 @@ import (
 	"github.com/project-platypus-perry/v8/internal/repository"
 	"github.com/project-platypus-perry/v8/internal/router"
 	"github.com/project-platypus-perry/v8/internal/service"
+	"github.com/project-platypus-perry/v8/pkg/logger"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -45,7 +47,10 @@ func NewDependencies(db *gorm.DB, cfg *config.Config) *Dependencies {
 
 func NewApp(cfg *config.Config) *App {
 	// Initialize the database
-	db := db.InitPostgres(cfg)
+	db, err := db.InitPostgres(cfg)
+	if err != nil {
+		logger.Fatal("Failed to initialize database", zap.Error(err))
+	}
 
 	// Initialize the dependencies
 	deps := NewDependencies(db, cfg)
