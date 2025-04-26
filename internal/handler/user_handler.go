@@ -5,18 +5,20 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/project-platypus-perry/v8/internal/constants"
 	"github.com/project-platypus-perry/v8/internal/model"
 	"github.com/project-platypus-perry/v8/internal/service"
-	"github.com/project-platypus-perry/v8/pkg/logger"
-	"go.uber.org/zap"
+	"github.com/project-platypus-perry/v8/pkg/response"
 )
 
 type UserHandler struct {
-	service service.UserService
+	userService service.UserService
 }
 
-func NewUserHandler(service service.UserService) *UserHandler {
-	return &UserHandler{service: service}
+func NewUserHandler(userService service.UserService) *UserHandler {
+	return &UserHandler{
+		userService: userService,
+	}
 }
 
 // @Summary Create a new user
@@ -30,27 +32,17 @@ func NewUserHandler(service service.UserService) *UserHandler {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /users [post]
 func (h *UserHandler) CreateUser(c echo.Context) error {
-	req := new(model.User)
-
-	if err := c.Bind(req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+	var user model.User
+	if err := c.Bind(&user); err != nil {
+		return response.ValidationError(c, "Invalid request payload")
 	}
 
-	if err := c.Validate(req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-
-	// Generate a new UUID for the user
-	req.ID = uuid.New().String()
-
-	logger.Info("Creating user", zap.Any("user", req))
-
-	createdUser, err := h.service.CreateUser(c.Request().Context(), req)
+	createdUser, err := h.userService.CreateUser(c.Request().Context(), &user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return response.Error(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, createdUser)
+	return response.Success(c, http.StatusCreated, createdUser)
 }
 
 // @Summary Get user by ID
@@ -66,17 +58,19 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 // @Router /users/{id} [get]
 func (h *UserHandler) GetUser(c echo.Context) error {
 	id := c.Param("id")
-
-	// validate uuid
 	if _, err := uuid.Parse(id); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
+		return response.ValidationError(c, "Invalid user ID format")
 	}
 
-	user, err := h.service.GetUser(c.Request().Context(), id)
+	user, err := h.userService.GetUser(c.Request().Context(), id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		if err == constants.ErrNotFound {
+			return response.NotFound(c, "User not found")
+		}
+		return response.InternalError(c)
 	}
-	return c.JSON(http.StatusOK, user)
+
+	return response.Success(c, http.StatusOK, user)
 }
 
 // @Summary Update user
@@ -93,26 +87,24 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 // @Router /users/{id} [patch]
 func (h *UserHandler) UpdateUser(c echo.Context) error {
 	id := c.Param("id")
-	user := new(model.User)
-
-	user.Name = c.FormValue("name")
-	user.Password = c.FormValue("password")
-
-	logger.Info("Updating user", zap.Any("user", user), zap.String("id", id), zap.String("name", user.Name), zap.String("password", user.Password))
-	// validate uuid
 	if _, err := uuid.Parse(id); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
+		return response.ValidationError(c, "Invalid user ID format")
 	}
 
-	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	var user model.User
+	if err := c.Bind(&user); err != nil {
+		return response.ValidationError(c, "Invalid request payload")
 	}
 
-	updatedUser, err := h.service.UpdateUser(c.Request().Context(), id, user)
+	updatedUser, err := h.userService.UpdateUser(c.Request().Context(), id, &user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		if err == constants.ErrNotFound {
+			return response.NotFound(c, "User not found")
+		}
+		return response.InternalError(c)
 	}
-	return c.JSON(http.StatusOK, updatedUser)
+
+	return response.Success(c, http.StatusOK, updatedUser)
 }
 
 // @Summary Delete user
@@ -128,15 +120,16 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 // @Router /users/{id} [delete]
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	id := c.Param("id")
-
-	// validate uuid
 	if _, err := uuid.Parse(id); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
+		return response.ValidationError(c, "Invalid user ID format")
 	}
 
-	err := h.service.DeleteUser(c.Request().Context(), id)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+	if err := h.userService.DeleteUser(c.Request().Context(), id); err != nil {
+		if err == constants.ErrNotFound {
+			return response.NotFound(c, "User not found")
+		}
+		return response.InternalError(c)
 	}
-	return c.JSON(http.StatusOK, "User deleted successfully")
+
+	return response.Success(c, http.StatusOK, nil)
 }

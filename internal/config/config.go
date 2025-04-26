@@ -2,8 +2,9 @@ package config
 
 import (
 	"errors"
-	"log"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/project-platypus-perry/v8/internal/constants"
@@ -11,39 +12,56 @@ import (
 
 type Config struct {
 	Env         string
+	Port        string
 	DatabaseURL string
 	LogLevel    string
-	Port        string
+	JWT         *JWTConfig
+	RateLimiter *RateLimiterConfig
+}
+
+type RateLimiterConfig struct {
+	Requests int           // Number of requests allowed
+	Duration time.Duration // Time window for rate limiting
 }
 
 func Load() *Config {
-	// Load from .env
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Println("No .env file found, using system environment variables")
-	}
-	env := os.Getenv("ENV")
-	if env == "" {
-		env = string(constants.EnvDevelopment)
-	}
-	dbUrl := os.Getenv("DATABASE_URL")
-	if dbUrl == "" {
-		log.Fatal("DATABASE_URL is not set")
-	}
-	logLevel := os.Getenv("LOG_LEVEL") // if not set, default to "info"
-	if logLevel == "" {
-		logLevel = "info"
-	}
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	if err := godotenv.Load(); err != nil {
+		panic(err)
 	}
 
-	return &Config{
-		Env:         env,
-		DatabaseURL: dbUrl,
-		LogLevel:    logLevel,
-		Port:        port,
+	cfg := &Config{
+		Env:         getEnv("ENV", string(constants.EnvDevelopment)),
+		Port:        getEnv("PORT", "8080"),
+		DatabaseURL: getEnv("DATABASE_URL", ""),
+		LogLevel:    getEnv("LOG_LEVEL", "info"),
+	}
+
+	cfg.InitJWTConfig()
+	cfg.InitRateLimiterConfig()
+
+	return cfg
+}
+
+func getEnv(key string, defaultVal string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultVal
+}
+
+func getEnvAsInt(key string, defaultVal int) int {
+	if value, exists := os.LookupEnv(key); exists {
+		if intVal, err := strconv.Atoi(value); err == nil {
+			return intVal
+		}
+	}
+	return defaultVal
+}
+
+func (c *Config) InitRateLimiterConfig() {
+	c.RateLimiter = &RateLimiterConfig{
+		Requests: getEnvAsInt("RATE_LIMIT_REQUESTS", 100),                            // 100 requests
+		Duration: time.Duration(getEnvAsInt("RATE_LIMIT_DURATION", 1)) * time.Minute, // per minute
 	}
 }
 
