@@ -22,7 +22,9 @@ type Router struct {
 }
 
 type Dependencies struct {
-	UserService service.UserService
+	UserService         service.UserService
+	AuthService         service.AuthService
+	OrganizationService service.OrganizationService
 }
 
 func NewRouter(e *echo.Echo, cfg *config.Config, deps *Dependencies) *Router {
@@ -56,29 +58,31 @@ func (r *Router) InitRoutes() {
 	v1.GET("/health", handler.NewHealthHandler().Check)
 
 	// Auth routes (no JWT required)
+	authHandler := handler.NewAuthHandler(r.deps.AuthService)
 	auth := v1.Group("/auth")
 	auth.POST("/refresh", jwtMiddleware.RefreshToken)
+	auth.POST("/register", authHandler.RegisterOrganization)
+	auth.POST("/login", authHandler.Login)
 
 	// Protected routes
 	protected := v1.Group("")
 	protected.Use(jwtMiddleware.JWTAuth)
 
 	// User routes with RBAC
-	user := handler.NewUserHandler(r.deps.UserService)
+	userHandler := handler.NewUserHandler(r.deps.UserService)
 
 	// Admin only routes
 	adminRoutes := protected.Group("")
 	adminRoutes.Use(middleware.RequireRole(constants.RoleAdmin))
-	adminRoutes.POST("/users", user.CreateUser)
-	adminRoutes.DELETE("/users/:id", user.DeleteUser)
+	adminRoutes.DELETE("/users/:id", userHandler.DeleteUser)
 
 	// Admin and Instructor routes
 	staffRoutes := protected.Group("")
 	staffRoutes.Use(middleware.RequireRole(constants.RoleAdmin, constants.RoleInstructor))
-	staffRoutes.PATCH("/users/:id", user.UpdateUser)
+	staffRoutes.PATCH("/users/:id", userHandler.UpdateUser)
 
 	// All authenticated users can read
-	protected.GET("/users/:id", user.GetUser, middleware.RequirePermission(constants.ReadUser))
+	protected.GET("/users/:id", userHandler.GetUser, middleware.RequirePermission(constants.ReadUser))
 }
 
 // handleNotFound handles undefined routes

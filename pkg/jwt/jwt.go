@@ -12,20 +12,20 @@ import (
 type TokenType string
 
 const (
-	AccessToken  TokenType = "access"
-	RefreshToken TokenType = "refresh"
+	AccessToken  TokenType = "Access"
+	RefreshToken TokenType = "Refresh"
 )
 
 type Claims struct {
-	UserID string             `json:"user_id"`
-	Role   constants.UserRole `json:"role"`
-	Type   TokenType          `json:"token_type"`
+	UserID string             `json:"UserID"`
+	Role   constants.UserRole `json:"Role"`
+	Type   TokenType          `json:"Type"`
 	jwt.RegisteredClaims
 }
 
 type TokenPair struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"AccessToken"`
+	RefreshToken string `json:"RefreshToken"`
 }
 
 func GenerateTokenPair(userID string, role constants.UserRole, cfg *config.JWTConfig) (*TokenPair, error) {

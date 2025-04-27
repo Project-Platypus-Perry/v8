@@ -12,7 +12,7 @@ const (
 )
 
 func (p *Environment) Scan(value interface{}) error {
-	*p = Environment(value.([]byte))
+	*p = Environment(value.(string))
 	return nil
 }
 

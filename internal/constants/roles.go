@@ -40,7 +40,7 @@ var RolePermissions = map[UserRole][]Permission{
 }
 
 func (p *UserRole) Scan(value interface{}) error {
-	*p = UserRole(value.([]byte))
+	*p = UserRole(value.(string))
 	return nil
 }
 

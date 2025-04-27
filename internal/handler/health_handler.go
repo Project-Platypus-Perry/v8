@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/project-platypus-perry/v8/pkg/response"
@@ -14,7 +15,8 @@ func NewHealthHandler() *HealthHandler {
 }
 
 type HealthResponse struct {
-	Status string `json:"status"`
+	Status string `json:"Status"`
+	Time   string `json:"Time"`
 }
 
 // @Summary Health check endpoint
@@ -28,5 +30,6 @@ type HealthResponse struct {
 func (h *HealthHandler) Check(c echo.Context) error {
 	return response.Success(c, http.StatusOK, HealthResponse{
 		Status: "healthy",
+		Time:   time.Now().Format(time.RFC3339),
 	})
 }

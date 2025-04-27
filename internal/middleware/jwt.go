@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/project-platypus-perry/v8/internal/config"
 	"github.com/project-platypus-perry/v8/pkg/jwt"
+	"github.com/project-platypus-perry/v8/pkg/response"
 )
 
 type JWTMiddleware struct {
@@ -54,33 +55,25 @@ func (m *JWTMiddleware) JWTAuth(next echo.HandlerFunc) echo.HandlerFunc {
 func (m *JWTMiddleware) RefreshToken(c echo.Context) error {
 	authHeader := c.Request().Header.Get("Authorization")
 	if authHeader == "" {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"error": "No authorization header",
-		})
+		return response.Error(c, http.StatusUnauthorized, "No authorization header")
 	}
 
 	parts := strings.Split(authHeader, " ")
 	if len(parts) != 2 || parts[0] != "Bearer" {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"error": "Invalid authorization header format",
-		})
+		return response.Error(c, http.StatusUnauthorized, "Invalid authorization header format")
 	}
 
 	refreshTokenString := parts[1]
 	claims, err := jwt.ValidateToken(refreshTokenString, m.config.RefreshTokenSecret, jwt.RefreshToken)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"error": "Invalid or expired refresh token",
-		})
+		return response.Error(c, http.StatusUnauthorized, err.Error())
 	}
 
 	// Generate new token pair
 	tokenPair, err := jwt.GenerateTokenPair(claims.UserID, claims.Role, m.config)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": "Failed to generate new tokens",
-		})
+		return response.Error(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, tokenPair)
+	return response.Success(c, http.StatusOK, tokenPair)
 }

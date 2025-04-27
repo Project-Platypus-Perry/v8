@@ -34,14 +34,26 @@ type App struct {
 }
 
 type Dependencies struct {
-	UserService service.UserService
+	UserService         service.UserService
+	AuthService         service.AuthService
+	OrganizationService service.OrganizationService
 }
 
 func NewDependencies(db *gorm.DB, cfg *config.Config) *Dependencies {
+
+	// Initialize the repositories
 	userRepository := repository.NewUserRepository(db)
+	organizationRepository := repository.NewOrganizationRepository(db)
+
+	// Initialize the services
 	userService := service.NewUserService(userRepository)
+	organizationService := service.NewOrganizationService(organizationRepository)
+	authService := service.NewAuthService(userService, organizationService, cfg.JWT)
+
 	return &Dependencies{
-		UserService: userService,
+		UserService:         userService,
+		AuthService:         authService,
+		OrganizationService: organizationService,
 	}
 }
 
@@ -63,7 +75,9 @@ func NewApp(cfg *config.Config) *App {
 
 	// Initialize router
 	routerDeps := &router.Dependencies{
-		UserService: deps.UserService,
+		UserService:         deps.UserService,
+		AuthService:         deps.AuthService,
+		OrganizationService: deps.OrganizationService,
 	}
 	r := router.NewRouter(e, cfg, routerDeps)
 	r.InitRoutes()
