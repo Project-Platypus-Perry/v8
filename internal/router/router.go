@@ -73,16 +73,19 @@ func (r *Router) InitRoutes() {
 
 	// Admin only routes
 	adminRoutes := protected.Group("")
-	adminRoutes.Use(middleware.RequireRole(constants.RoleAdmin))
+	adminRoutes.Use(middleware.RequireRole(constants.AdminRole))
+	adminRoutes.POST("/users/invite", userHandler.InviteUsers)
 	adminRoutes.DELETE("/users/:id", userHandler.DeleteUser)
 
 	// Admin and Instructor routes
 	staffRoutes := protected.Group("")
-	staffRoutes.Use(middleware.RequireRole(constants.RoleAdmin, constants.RoleInstructor))
+	staffRoutes.Use(middleware.RequireRole(constants.AdminRole, constants.InstructorRole, constants.StudentRole))
 	staffRoutes.PATCH("/users/:id", userHandler.UpdateUser)
 
 	// All authenticated users can read
 	protected.GET("/users/:id", userHandler.GetUser, middleware.RequirePermission(constants.ReadUser))
+	protected.POST("/users/request-reset-password", userHandler.RequestPasswordReset)
+	protected.POST("/users/reset-password", userHandler.ResetPassword)
 }
 
 // handleNotFound handles undefined routes

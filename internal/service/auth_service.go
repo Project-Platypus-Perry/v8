@@ -7,8 +7,6 @@ import (
 	"github.com/project-platypus-perry/v8/internal/constants"
 	"github.com/project-platypus-perry/v8/internal/model"
 	"github.com/project-platypus-perry/v8/pkg/jwt"
-	"github.com/project-platypus-perry/v8/pkg/logger"
-	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -37,8 +35,6 @@ func (s *authService) Login(ctx context.Context, email string, password string) 
 		return nil, nil, err
 	}
 
-	logger.Info("User found", zap.Any("user", user))
-
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, nil, err
 	}
@@ -47,8 +43,6 @@ func (s *authService) Login(ctx context.Context, email string, password string) 
 	if err != nil {
 		return nil, nil, err
 	}
-
-	logger.Info("Token pair generated", zap.Any("tokenPair", tokenPair))
 
 	return user, tokenPair, nil
 }
@@ -60,7 +54,7 @@ func (s *authService) RegisterOrganization(ctx context.Context, user *model.User
 	}
 
 	user.OrganizationID = organizationID
-	user.Role = constants.RoleAdmin
+	user.Role = constants.AdminRole
 
 	if err := s.userService.CreateUser(ctx, user); err != nil {
 		return err

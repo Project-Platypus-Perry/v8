@@ -156,3 +156,86 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 
 	return response.Success(c, http.StatusOK, nil)
 }
+
+// @Summary Invite users
+// @Description Invites multiple users to the platform by creating their accounts and sending credentials via email
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param invite body model.UserInviteRequest true "User invite request"
+// @Success 200 {object} response.Response "Users invited successfully"
+// @Failure 400 {object} response.Response "Invalid request payload"
+// @Failure 401 {object} response.Response "Unauthorized"
+// @Failure 403 {object} response.Response "Forbidden - Not an admin"
+// @Failure 500 {object} response.Response "Internal server error"
+// @Router /users/invite [post]
+func (h *UserHandler) InviteUsers(c echo.Context) error {
+	// // Get user role from context (set by auth middleware)
+	// role := c.Get("userRole")
+	// if role != constants.AdminRole {
+	// 	return response.Error(c, http.StatusForbidden, "Only admins can invite users")
+	// }
+
+	var req model.UserInviteRequest
+	if err := c.Bind(&req); err != nil {
+		return response.ValidationError(c, "Invalid request payload")
+	}
+
+	if err := h.userService.InviteUsers(c.Request().Context(), req.Users); err != nil {
+		return response.Error(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return response.Success(c, http.StatusOK, "Users invited successfully")
+}
+
+// @Summary Request password reset
+// @Description Sends a password reset email to the user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body model.PasswordResetRequest true "Password reset request"
+// @Success 200 {object} response.Response "Password reset email sent"
+// @Failure 400 {object} response.Response "Invalid request payload"
+// @Failure 500 {object} response.Response "Internal server error"
+// @Router /users/password-reset-request [post]
+func (h *UserHandler) RequestPasswordReset(c echo.Context) error {
+	var req model.PasswordResetRequest
+	if err := c.Bind(&req); err != nil {
+		return response.ValidationError(c, "Invalid request payload")
+	}
+
+	if err := h.userService.RequestPasswordReset(c.Request().Context(), req.Email); err != nil {
+		return response.Error(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return response.Success(c, http.StatusOK, "If the email exists, a password reset link has been sent")
+}
+
+// @Summary Reset password
+// @Description Resets user's password using the reset token
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body model.PasswordResetConfirm true "Password reset confirmation"
+// @Success 200 {object} response.Response "Password reset successful"
+// @Failure 400 {object} response.Response "Invalid request payload or token"
+// @Failure 500 {object} response.Response "Internal server error"
+// @Router /users/password-reset [post]
+func (h *UserHandler) ResetPassword(c echo.Context) error {
+	var req model.PasswordResetConfirm
+	if err := c.Bind(&req); err != nil {
+		return response.ValidationError(c, "Invalid request payload")
+	}
+
+	// Validate the request payload
+	if err := c.Validate(req); err != nil {
+		return response.ValidationError(c, "Invalid request payload")
+	}
+
+	if err := h.userService.ResetPassword(c.Request().Context(), req.Token, req.NewPassword); err != nil {
+		return response.Error(c, http.StatusBadRequest, "Invalid or expired reset token")
+	}
+
+	return response.Success(c, http.StatusOK, "Password reset successful")
+}

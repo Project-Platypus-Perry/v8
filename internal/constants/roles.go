@@ -5,9 +5,9 @@ import "database/sql/driver"
 type UserRole string
 
 const (
-	RoleAdmin      UserRole = "admin"
-	RoleInstructor UserRole = "instructor"
-	RoleStudent    UserRole = "student"
+	AdminRole      UserRole = "admin"
+	InstructorRole UserRole = "instructor"
+	StudentRole    UserRole = "student"
 )
 
 type Permission string
@@ -24,17 +24,17 @@ const (
 
 // RolePermissions maps roles to their allowed permissions
 var RolePermissions = map[UserRole][]Permission{
-	RoleAdmin: {
+	AdminRole: {
 		CreateUser,
 		ReadUser,
 		UpdateUser,
 		DeleteUser,
 	},
-	RoleInstructor: {
+	InstructorRole: {
 		ReadUser,
 		UpdateUser,
 	},
-	RoleStudent: {
+	StudentRole: {
 		ReadUser,
 	},
 }

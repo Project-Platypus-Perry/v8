@@ -17,6 +17,7 @@ type Config struct {
 	LogLevel    string
 	JWT         *JWTConfig
 	RateLimiter *RateLimiterConfig
+	Email       *EmailConfig
 }
 
 type RateLimiterConfig struct {
@@ -38,6 +39,7 @@ func Load() *Config {
 
 	cfg.InitJWTConfig()
 	cfg.InitRateLimiterConfig()
+	cfg.InitEmailConfig()
 
 	return cfg
 }

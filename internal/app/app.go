@@ -12,6 +12,7 @@ import (
 	"github.com/project-platypus-perry/v8/internal/repository"
 	"github.com/project-platypus-perry/v8/internal/router"
 	"github.com/project-platypus-perry/v8/internal/service"
+	emailService "github.com/project-platypus-perry/v8/pkg/email_service"
 	"github.com/project-platypus-perry/v8/pkg/logger"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -46,7 +47,8 @@ func NewDependencies(db *gorm.DB, cfg *config.Config) *Dependencies {
 	organizationRepository := repository.NewOrganizationRepository(db)
 
 	// Initialize the services
-	userService := service.NewUserService(userRepository)
+	emailService := emailService.NewEmailService(cfg.Email)
+	userService := service.NewUserService(userRepository, emailService, cfg.JWT.AccessTokenSecret)
 	organizationService := service.NewOrganizationService(organizationRepository)
 	authService := service.NewAuthService(userService, organizationService, cfg.JWT)
 

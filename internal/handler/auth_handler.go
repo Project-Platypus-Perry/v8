@@ -6,9 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/project-platypus-perry/v8/internal/model"
 	"github.com/project-platypus-perry/v8/internal/service"
-	"github.com/project-platypus-perry/v8/pkg/logger"
 	"github.com/project-platypus-perry/v8/pkg/response"
-	"go.uber.org/zap"
 )
 
 type AuthHandler struct {
@@ -22,10 +20,7 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) Login(c echo.Context) error {
-	loginRequest := struct {
-		Email    string `json:"Email" validate:"required,email"`
-		Password string `json:"Password" validate:"required"`
-	}{}
+	loginRequest := model.LoginRequest{}
 
 	if err := c.Bind(&loginRequest); err != nil {
 		return response.Error(c, http.StatusBadRequest, "Invalid request format: "+err.Error())
@@ -35,8 +30,6 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	if err := c.Validate(&loginRequest); err != nil {
 		return response.Error(c, http.StatusBadRequest, "Validation error: "+err.Error())
 	}
-
-	logger.Info("Logging in", zap.Any("loginRequest", loginRequest))
 
 	user, tokenPair, err := h.authService.Login(c.Request().Context(), loginRequest.Email, loginRequest.Password)
 	if err != nil {
