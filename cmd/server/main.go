@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/gagan-gaurav/v8/pkg/logger"
+	"github.com/project-platypus-perry/v8/pkg/logger"
 
-	_ "github.com/gagan-gaurav/v8/docs" // This line is needed for swagger
-	"github.com/gagan-gaurav/v8/internal/app"
-	"github.com/gagan-gaurav/v8/internal/config"
+	_ "github.com/project-platypus-perry/v8/docs" // This line is needed for swagger
+	"github.com/project-platypus-perry/v8/internal/app"
+	"github.com/project-platypus-perry/v8/internal/config"
 )
 
 // @title           Base API

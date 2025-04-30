@@ -2,15 +2,21 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/project-platypus-perry/v8/pkg/response"
 )
 
-type HealthHandler struct {
-}
+type HealthHandler struct{}
 
 func NewHealthHandler() *HealthHandler {
 	return &HealthHandler{}
+}
+
+type HealthResponse struct {
+	Status string `json:"Status"`
+	Time   string `json:"Time"`
 }
 
 // @Summary Health check endpoint
@@ -18,9 +24,12 @@ func NewHealthHandler() *HealthHandler {
 // @Tags health
 // @Accept json
 // @Produce json
-// @Success 200 {string} string "OK"
+// @Success 200 {object} HealthResponse "OK"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /health [get]
 func (h *HealthHandler) Check(c echo.Context) error {
-	return c.JSON(http.StatusOK, "OK")
+	return response.Success(c, http.StatusOK, HealthResponse{
+		Status: "healthy",
+		Time:   time.Now().Format(time.RFC3339),
+	})
 }

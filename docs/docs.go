@@ -76,7 +76,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_gagan-gaurav_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
                         }
                     }
                 ],
@@ -84,7 +84,7 @@ const docTemplate = `{
                     "201": {
                         "description": "User created successfully",
                         "schema": {
-                            "$ref": "#/definitions/github_com_gagan-gaurav_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
                         }
                     },
                     "400": {
@@ -135,7 +135,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User found successfully",
                         "schema": {
-                            "$ref": "#/definitions/github_com_gagan-gaurav_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
                         }
                     },
                     "400": {
@@ -252,7 +252,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_gagan-gaurav_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
                         }
                     }
                 ],
@@ -260,7 +260,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User updated successfully",
                         "schema": {
-                            "$ref": "#/definitions/github_com_gagan-gaurav_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
                         }
                     },
                     "400": {
@@ -295,7 +295,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_gagan-gaurav_base_internal_model.User": {
+        "github_com_project-platypus-perry_base_internal_model.User": {
             "type": "object",
             "required": [
                 "Email",

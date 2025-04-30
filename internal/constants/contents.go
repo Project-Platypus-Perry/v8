@@ -11,7 +11,7 @@ const (
 )
 
 func (p *Language) Scan(value interface{}) error {
-	*p = Language(value.([]byte))
+	*p = Language(value.(string))
 	return nil
 }
 
@@ -28,7 +28,7 @@ const (
 )
 
 func (p *Visibility) Scan(value interface{}) error {
-	*p = Visibility(value.([]byte))
+	*p = Visibility(value.(string))
 	return nil
 }
 
@@ -46,7 +46,7 @@ const (
 )
 
 func (p *ContentType) Scan(value interface{}) error {
-	*p = ContentType(value.([]byte))
+	*p = ContentType(value.(string))
 	return nil
 }
 
