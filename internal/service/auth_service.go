@@ -39,7 +39,7 @@ func (s *authService) Login(ctx context.Context, email string, password string) 
 		return nil, nil, err
 	}
 
-	tokenPair, err := jwt.GenerateTokenPair(user.ID, user.Role, s.config)
+	tokenPair, err := jwt.GenerateTokenPair(user.ID, user.Role, user.OrganizationID, s.config)
 	if err != nil {
 		return nil, nil, err
 	}

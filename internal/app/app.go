@@ -38,6 +38,8 @@ type Dependencies struct {
 	UserService         service.UserService
 	AuthService         service.AuthService
 	OrganizationService service.OrganizationService
+	BatchService        service.BatchService
+	ClassroomService    service.ClassroomService
 }
 
 func NewDependencies(db *gorm.DB, cfg *config.Config) *Dependencies {
@@ -45,17 +47,23 @@ func NewDependencies(db *gorm.DB, cfg *config.Config) *Dependencies {
 	// Initialize the repositories
 	userRepository := repository.NewUserRepository(db)
 	organizationRepository := repository.NewOrganizationRepository(db)
+	batchRepository := repository.NewBatchRepository(db)
+	classroomRepository := repository.NewClassroomRepository(db)
 
 	// Initialize the services
 	emailService := emailService.NewEmailService(cfg.Email)
 	userService := service.NewUserService(userRepository, emailService, cfg.JWT.AccessTokenSecret)
 	organizationService := service.NewOrganizationService(organizationRepository)
 	authService := service.NewAuthService(userService, organizationService, cfg.JWT)
+	batchService := service.NewBatchService(batchRepository)
+	classroomService := service.NewClassroomService(classroomRepository)
 
 	return &Dependencies{
 		UserService:         userService,
 		AuthService:         authService,
 		OrganizationService: organizationService,
+		BatchService:        batchService,
+		ClassroomService:    classroomService,
 	}
 }
 
@@ -80,6 +88,8 @@ func NewApp(cfg *config.Config) *App {
 		UserService:         deps.UserService,
 		AuthService:         deps.AuthService,
 		OrganizationService: deps.OrganizationService,
+		BatchService:        deps.BatchService,
+		ClassroomService:    deps.ClassroomService,
 	}
 	r := router.NewRouter(e, cfg, routerDeps)
 	r.InitRoutes()

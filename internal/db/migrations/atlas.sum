@@ -1,4 +1,4 @@
-h1:DwVescceo1KcG0lTocJyfiDc+GWA2SOk9RXlEYi2so0=
+h1:xi07UPf/xaTrYQvQgNWaSUJrDWNsipfDTMhyPDnAlUA=
 20250420134530.sql h1:RKyq/zT/s5mv+pxXUa2slj8gfZ8yMSBy5D7AlioORWQ=
 20250420145611.sql h1:Xpvau9gFc3hNRCBzaux6n1l/s51XQjilcKfSArVculM=
 20250420145902.sql h1:zJYCgQQZoglpPM1c4slYQzVEqPIrMfDL5ciurbjbhdI=
@@ -13,3 +13,6 @@ h1:DwVescceo1KcG0lTocJyfiDc+GWA2SOk9RXlEYi2so0=
 20250423111447_contents_table.sql h1:s23eYUpICkfp1fZN9hEqOa/WAojFk+KaoocK2VEGubE=
 20250426202720_user_model_changed.sql h1:TwpKGb7ICYunAPKRLexyHc3zy8wwqUNXqfSHgYsJM/k=
 20250427141013_org_ref_usermodel.sql h1:ATn9+yoJBWOFBOMWQMjnY9f/fy1mJ986gEDv6Xsrh0o=
+20250508113824_batches_and_classrooms.sql h1:/cR2YNU19SRZlCwVtfZIal28LnCfBeLkEg1xTvhC+2Q=
+20250509125233_userbatches_schema_change.sql h1:aNQJFnCjTCRZ0KdiBbG6+AbjW90MUvs1bLZeDtAoGl4=
+20250509135024_fixed_compositekey.sql h1:DUFnF8S8VpZBwtlg86Rw8g5wm/zN81B33tAhNiuJ+LU=

@@ -40,8 +40,9 @@ func (m *JWTMiddleware) JWTAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		// Store user information in context
-		c.Set("user_id", claims.UserID)
-		c.Set("user_role", claims.Role)
+		c.Set("UserID", claims.UserID)
+		c.Set("Role", claims.Role)
+		c.Set("OrganizationID", claims.OrganizationID)
 		return next(c)
 	}
 }
@@ -64,7 +65,7 @@ func (m *JWTMiddleware) RefreshToken(c echo.Context) error {
 	}
 
 	// Generate new token pair
-	tokenPair, err := jwt.GenerateTokenPair(claims.UserID, claims.Role, m.config)
+	tokenPair, err := jwt.GenerateTokenPair(claims.UserID, claims.Role, claims.OrganizationID, m.config)
 	if err != nil {
 		return response.Error(c, http.StatusInternalServerError, err.Error())
 	}
