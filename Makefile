@@ -8,6 +8,12 @@ GO_BIN := $(shell go env GOPATH)/bin
 include .env
 export $(shell sed 's/=.*//' .env)
 
+# Setup project
+.PHONY: setup
+setup:
+	@chmod +x scripts/setup.sh
+	@./scripts/setup.sh
+
 # Binary build
 .PHONY: build
 build:
