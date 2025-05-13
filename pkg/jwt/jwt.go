@@ -17,9 +17,10 @@ const (
 )
 
 type Claims struct {
-	UserID string             `json:"UserID"`
-	Role   constants.UserRole `json:"Role"`
-	Type   TokenType          `json:"Type"`
+	UserID         string             `json:"UserID"`
+	Role           constants.UserRole `json:"Role"`
+	Type           TokenType          `json:"Type"`
+	OrganizationID string             `json:"OrganizationID"`
 	jwt.RegisteredClaims
 }
 
@@ -28,15 +29,15 @@ type TokenPair struct {
 	RefreshToken string `json:"RefreshToken"`
 }
 
-func GenerateTokenPair(userID string, role constants.UserRole, cfg *config.JWTConfig) (*TokenPair, error) {
+func GenerateTokenPair(userID string, role constants.UserRole, organizationID string, cfg *config.JWTConfig) (*TokenPair, error) {
 	// Generate Access Token
-	accessToken, err := generateToken(userID, role, AccessToken, cfg.AccessTokenSecret, cfg.AccessTokenExpiry)
+	accessToken, err := generateToken(userID, role, organizationID, AccessToken, cfg.AccessTokenSecret, cfg.AccessTokenExpiry)
 	if err != nil {
 		return nil, err
 	}
 
 	// Generate Refresh Token
-	refreshToken, err := generateToken(userID, role, RefreshToken, cfg.RefreshTokenSecret, cfg.RefreshTokenExpiry)
+	refreshToken, err := generateToken(userID, role, organizationID, RefreshToken, cfg.RefreshTokenSecret, cfg.RefreshTokenExpiry)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +48,12 @@ func GenerateTokenPair(userID string, role constants.UserRole, cfg *config.JWTCo
 	}, nil
 }
 
-func generateToken(userID string, role constants.UserRole, tokenType TokenType, secret string, expiry time.Duration) (string, error) {
+func generateToken(userID string, role constants.UserRole, organizationID string, tokenType TokenType, secret string, expiry time.Duration) (string, error) {
 	claims := &Claims{
-		UserID: userID,
-		Role:   role,
-		Type:   tokenType,
+		UserID:         userID,
+		Role:           role,
+		OrganizationID: organizationID,
+		Type:           tokenType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiry)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
