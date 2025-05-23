@@ -15,8 +15,8 @@ func NewHealthHandler() *HealthHandler {
 }
 
 type HealthResponse struct {
-	Status string `json:"Status"`
-	Time   string `json:"Time"`
+	Status string `json:"status"`
+	Time   string `json:"time"`
 }
 
 // @Summary Health check endpoint
@@ -24,8 +24,8 @@ type HealthResponse struct {
 // @Tags health
 // @Accept json
 // @Produce json
-// @Success 200 {object} HealthResponse "OK"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Success 200 {object} response.Response{data=HealthResponse} "Service is healthy"
+// @Failure 500 {object} response.Response "Internal server error"
 // @Router /health [get]
 func (h *HealthHandler) Check(c echo.Context) error {
 	return response.Success(c, http.StatusOK, HealthResponse{

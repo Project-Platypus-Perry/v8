@@ -24,6 +24,489 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Authenticate user with email and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_handler.LoginResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request format or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Generate new access and refresh tokens using a valid refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh access token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {refresh_token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token refreshed successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_jwt.TokenPair"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid or expired refresh token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Register a new organization with an admin user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register organization",
+                "parameters": [
+                    {
+                        "description": "Organization and admin user details",
+                        "name": "registration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Organization created and admin registered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request format or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new batch (Admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "batch"
+                ],
+                "summary": "Create a new batch",
+                "parameters": [
+                    {
+                        "description": "Batch details",
+                        "name": "batch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.Batch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Batch created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all batches that the authenticated user belongs to",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "batch"
+                ],
+                "summary": "List user's batches",
+                "responses": {
+                    "200": {
+                        "description": "User batches retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.BatchResponseModel"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/users/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add multiple users to a batch (Admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "batch"
+                ],
+                "summary": "Add users to batch",
+                "parameters": [
+                    {
+                        "description": "Users to add to batch",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.AssociateUserToBatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User added to batch successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/users/remove": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove multiple users from a batch (Admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "batch"
+                ],
+                "summary": "Remove users from batch",
+                "parameters": [
+                    {
+                        "description": "Users to remove from batch",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.AssociateUserToBatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User removed from batch successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve a specific batch by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "batch"
+                ],
+                "summary": "Get batch by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Batch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Batch found successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.BatchResponseModel"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid batch ID",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Batch not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the API service is up and running",
@@ -39,26 +522,40 @@ const docTemplate = `{
                 "summary": "Health check endpoint",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Service is healthy",
                         "schema": {
-                            "type": "string"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_handler.HealthResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     }
                 }
             }
         },
-        "/users": {
+        "/users/invite": {
             "post": {
-                "description": "Creates a new user with the provided information",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Invites multiple users to the platform by creating their accounts and sending credentials via email",
                 "consumes": [
                     "application/json"
                 ],
@@ -68,41 +565,161 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Create a new user",
+                "summary": "Invite users",
                 "parameters": [
                     {
-                        "description": "User object that needs to be created",
-                        "name": "user",
+                        "description": "User invite request",
+                        "name": "invite",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.UserInviteRequest"
                         }
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "User created successfully",
+                    "200": {
+                        "description": "Users invited successfully",
                         "schema": {
-                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "400": {
-                        "description": "Invalid request body",
+                        "description": "Invalid request payload",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Not an admin",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/request-reset-password": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Sends a password reset email to the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Request password reset",
+                "parameters": [
+                    {
+                        "description": "Password reset request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.PasswordResetRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset email sent",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/reset-password": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Resets user's password using the reset token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Reset password",
+                "parameters": [
+                    {
+                        "description": "Password reset confirmation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.PasswordResetConfirm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     }
                 }
@@ -110,7 +727,12 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "get": {
-                "description": "Retrieves a user by their UUID",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieves a user by their UUID or email address",
                 "consumes": [
                     "application/json"
                 ],
@@ -120,55 +742,75 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Get user by ID",
+                "summary": "Get user by ID or email",
                 "parameters": [
                     {
                         "type": "string",
                         "format": "uuid",
                         "description": "User UUID",
                         "name": "id",
-                        "in": "path",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User email address",
+                        "name": "email",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "User found successfully",
                         "schema": {
-                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.User"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "Invalid UUID format",
+                        "description": "Invalid parameters or validation error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Deletes a user by their UUID",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Deletes a user by their UUID (Admin only)",
                 "consumes": [
                     "application/json"
                 ],
@@ -193,40 +835,48 @@ const docTemplate = `{
                     "200": {
                         "description": "User deleted successfully",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Invalid UUID format",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     }
                 }
             },
             "patch": {
-                "description": "Updates an existing user's information",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Updates an existing user's information (Admin and Instructor only)",
                 "consumes": [
                     "application/json"
                 ],
@@ -252,7 +902,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.User"
                         }
                     }
                 ],
@@ -260,34 +910,49 @@ const docTemplate = `{
                     "200": {
                         "description": "User updated successfully",
                         "schema": {
-                            "$ref": "#/definitions/github_com_project-platypus-perry_base_internal_model.User"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.User"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Invalid UUID format or request body",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin or Instructor role required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_response.Response"
                         }
                     }
                 }
@@ -295,7 +960,158 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_project-platypus-perry_base_internal_model.User": {
+        "github_com_project-platypus-perry_v8_internal_constants.UserRole": {
+            "type": "string",
+            "enum": [
+                "admin",
+                "instructor",
+                "student"
+            ],
+            "x-enum-varnames": [
+                "AdminRole",
+                "InstructorRole",
+                "StudentRole"
+            ]
+        },
+        "github_com_project-platypus-perry_v8_internal_model.AssociateUserToBatchRequest": {
+            "type": "object",
+            "required": [
+                "BatchID",
+                "UserIDs"
+            ],
+            "properties": {
+                "BatchID": {
+                    "type": "string"
+                },
+                "UserIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.Batch": {
+            "type": "object",
+            "required": [
+                "Name"
+            ],
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Organization": {
+                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.Organization"
+                },
+                "OrganizationID": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.BatchResponseModel": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "OrganizationID": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.LoginRequest": {
+            "type": "object",
+            "required": [
+                "Email",
+                "Password"
+            ],
+            "properties": {
+                "Email": {
+                    "type": "string"
+                },
+                "Password": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.Organization": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.PasswordResetConfirm": {
+            "type": "object",
+            "required": [
+                "NewPassword",
+                "Token"
+            ],
+            "properties": {
+                "NewPassword": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "Token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.PasswordResetRequest": {
+            "type": "object",
+            "required": [
+                "Email"
+            ],
+            "properties": {
+                "Email": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.User": {
             "type": "object",
             "required": [
                 "Email",
@@ -318,12 +1134,21 @@ const docTemplate = `{
                     "maxLength": 50,
                     "minLength": 2
                 },
+                "Organization": {
+                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.Organization"
+                },
+                "OrganizationID": {
+                    "type": "string"
+                },
                 "Password": {
                     "type": "string",
                     "minLength": 8
                 },
                 "Phone": {
                     "type": "string"
+                },
+                "Role": {
+                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_constants.UserRole"
                 },
                 "createdAt": {
                     "type": "string"
@@ -339,6 +1164,76 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_project-platypus-perry_v8_internal_model.UserInvite": {
+            "type": "object",
+            "required": [
+                "Email",
+                "Name",
+                "OrganizationID",
+                "Phone",
+                "Role"
+            ],
+            "properties": {
+                "Email": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 2
+                },
+                "OrganizationID": {
+                    "type": "string"
+                },
+                "Phone": {
+                    "type": "string"
+                },
+                "Role": {
+                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_constants.UserRole"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_internal_model.UserInviteRequest": {
+            "type": "object",
+            "required": [
+                "Users"
+            ],
+            "properties": {
+                "Users": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.UserInvite"
+                    }
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_pkg_jwt.TokenPair": {
+            "type": "object",
+            "properties": {
+                "AccessToken": {
+                    "type": "string"
+                },
+                "RefreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_project-platypus-perry_v8_pkg_response.Response": {
+            "type": "object",
+            "properties": {
+                "Data": {},
+                "Message": {
+                    "type": "string"
+                },
+                "StatusCode": {
+                    "type": "integer"
+                },
+                "Success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "gorm.DeletedAt": {
             "type": "object",
             "properties": {
@@ -350,6 +1245,36 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "internal_handler.HealthResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handler.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "tokenPair": {
+                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_pkg_jwt.TokenPair"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_project-platypus-perry_v8_internal_model.User"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
