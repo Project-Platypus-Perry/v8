@@ -47,6 +47,16 @@ func (m *JWTMiddleware) JWTAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+// @Summary Refresh access token
+// @Description Generate new access and refresh tokens using a valid refresh token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer {refresh_token}"
+// @Success 200 {object} response.Response{data=jwt.TokenPair} "Token refreshed successfully"
+// @Failure 401 {object} response.Response "Invalid or expired refresh token"
+// @Failure 500 {object} response.Response "Internal server error"
+// @Router /auth/refresh [post]
 func (m *JWTMiddleware) RefreshToken(c echo.Context) error {
 	authHeader := c.Request().Header.Get("Authorization")
 	if authHeader == "" {

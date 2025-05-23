@@ -24,6 +24,11 @@ import (
 // @BasePath  /api/v1
 // @schemes   http https
 
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @description JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"
+
 func main() {
 	cfg := config.Load()
 	logger := logger.Init(cfg.LogLevel)
