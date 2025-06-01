@@ -45,21 +45,24 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 // 	return response.Success(c, http.StatusCreated, createdUser)
 // }
 
-// @Summary Get user by ID
-// @Description Retrieves a user by their UUID
+// @Summary Get user by ID or email
+// @Description Retrieves a user by their UUID or email address
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param id path string true "User UUID" format(uuid)
-// @Success 200 {object} model.User "User found successfully"
-// @Failure 400 {object} map[string]string "Invalid UUID format"
-// @Failure 404 {object} map[string]string "User not found"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Security ApiKeyAuth
+// @Param id query string false "User UUID" format(uuid)
+// @Param email query string false "User email address" format(email)
+// @Success 200 {object} response.Response{data=model.User} "User found successfully"
+// @Failure 400 {object} response.Response "Invalid parameters or validation error"
+// @Failure 401 {object} response.Response "Unauthorized"
+// @Failure 404 {object} response.Response "User not found"
+// @Failure 500 {object} response.Response "Internal server error"
 // @Router /users/{id} [get]
 func (h *UserHandler) GetUser(c echo.Context) error {
 	// Get user by ID or email
-	id := c.QueryParam("id")
-	email := c.QueryParam("email")
+	id := c.Param("id")
+	email := c.Param("email")
 
 	if id == "" && email == "" {
 		return response.ValidationError(c, "Either id or email must be provided")
@@ -97,16 +100,19 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 }
 
 // @Summary Update user
-// @Description Updates an existing user's information
+// @Description Updates an existing user's information (Admin and Instructor only)
 // @Tags users
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Param id path string true "User UUID" format(uuid)
 // @Param user body model.User true "Updated user object"
-// @Success 200 {object} model.User "User updated successfully"
-// @Failure 400 {object} map[string]string "Invalid UUID format or request body"
-// @Failure 404 {object} map[string]string "User not found"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Success 200 {object} response.Response{data=model.User} "User updated successfully"
+// @Failure 400 {object} response.Response "Invalid UUID format or request body"
+// @Failure 401 {object} response.Response "Unauthorized"
+// @Failure 403 {object} response.Response "Forbidden - Admin or Instructor role required"
+// @Failure 404 {object} response.Response "User not found"
+// @Failure 500 {object} response.Response "Internal server error"
 // @Router /users/{id} [patch]
 func (h *UserHandler) UpdateUser(c echo.Context) error {
 	id := c.Param("id")
@@ -131,15 +137,18 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 }
 
 // @Summary Delete user
-// @Description Deletes a user by their UUID
+// @Description Deletes a user by their UUID (Admin only)
 // @Tags users
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Param id path string true "User UUID" format(uuid)
-// @Success 200 {string} string "User deleted successfully"
-// @Failure 400 {object} map[string]string "Invalid UUID format"
-// @Failure 404 {object} map[string]string "User not found"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Success 200 {object} response.Response "User deleted successfully"
+// @Failure 400 {object} response.Response "Invalid UUID format"
+// @Failure 401 {object} response.Response "Unauthorized"
+// @Failure 403 {object} response.Response "Forbidden - Admin role required"
+// @Failure 404 {object} response.Response "User not found"
+// @Failure 500 {object} response.Response "Internal server error"
 // @Router /users/{id} [delete]
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	id := c.Param("id")
@@ -194,11 +203,13 @@ func (h *UserHandler) InviteUsers(c echo.Context) error {
 // @Tags users
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Param request body model.PasswordResetRequest true "Password reset request"
 // @Success 200 {object} response.Response "Password reset email sent"
 // @Failure 400 {object} response.Response "Invalid request payload"
+// @Failure 401 {object} response.Response "Unauthorized"
 // @Failure 500 {object} response.Response "Internal server error"
-// @Router /users/password-reset-request [post]
+// @Router /users/request-reset-password [post]
 func (h *UserHandler) RequestPasswordReset(c echo.Context) error {
 	var req model.PasswordResetRequest
 	if err := c.Bind(&req); err != nil {
@@ -217,11 +228,13 @@ func (h *UserHandler) RequestPasswordReset(c echo.Context) error {
 // @Tags users
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Param request body model.PasswordResetConfirm true "Password reset confirmation"
 // @Success 200 {object} response.Response "Password reset successful"
 // @Failure 400 {object} response.Response "Invalid request payload or token"
+// @Failure 401 {object} response.Response "Unauthorized"
 // @Failure 500 {object} response.Response "Internal server error"
-// @Router /users/password-reset [post]
+// @Router /users/reset-password [post]
 func (h *UserHandler) ResetPassword(c echo.Context) error {
 	var req model.PasswordResetConfirm
 	if err := c.Bind(&req); err != nil {

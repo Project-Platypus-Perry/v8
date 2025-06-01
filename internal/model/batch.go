@@ -7,7 +7,6 @@ import (
 )
 
 type Batch struct {
-	gorm.Model
 	ID             string       `json:"ID" gorm:"primaryKey"`
 	OrganizationID string       `json:"OrganizationID" gorm:"not null"`
 	Organization   Organization `json:"Organization" gorm:"foreignKey:OrganizationID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
