@@ -103,7 +103,7 @@ func (r *batchRepository) RemoveUserFromBatch(ctx context.Context, batchID strin
 func (r *batchRepository) ListUserBatches(ctx context.Context, userID string, organizationID string) ([]*model.BatchResponseModel, error) {
 	var batches []*model.BatchResponseModel
 	if err := r.db.Joins("JOIN users_batches ON batches.id = users_batches.batch_id").
-		Where("users_batches.user_id = ? AND users_batches.organization_id = ? AND users_batches.deleted_at = NULL", userID, organizationID).
+		Where("users_batches.user_id = ? AND users_batches.organization_id = ? AND users_batches.deleted_at IS NULL", userID, organizationID).
 		Find(&batches).Error; err != nil {
 		return nil, err
 	}

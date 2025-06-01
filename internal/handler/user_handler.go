@@ -61,8 +61,8 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 // @Router /users/{id} [get]
 func (h *UserHandler) GetUser(c echo.Context) error {
 	// Get user by ID or email
-	id := c.QueryParam("id")
-	email := c.QueryParam("email")
+	id := c.Param("id")
+	email := c.Param("email")
 
 	if id == "" && email == "" {
 		return response.ValidationError(c, "Either id or email must be provided")
